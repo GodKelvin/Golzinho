@@ -1,4 +1,4 @@
-import { launch } from "puppeteer";
+import puppeteer, { launch } from "puppeteer";
 import { IPartida } from "../interfaces/partida";
 
 export class Partida{
@@ -8,7 +8,15 @@ export class Partida{
     
     //@TODO: Fazer de outros campeonatos, no momento só busco do brasileiro
     async getAMatch(): Promise<any>{
-        let browser = await launch();
+        let browser = await launch({
+            args: [
+                "--disable-setuid-sandbox",
+                "--no-sandbox",
+                "--single-process",
+                "--no-zygote"
+            ],
+            executablePath: process.env.NODE_ENV == "production" ? process.env.PUPPETEER_EXECUTABLE_PATH : puppeteer.executablePath()
+        });
         let page = await browser.newPage();
         //await page.setViewport({ width: 3840, height: 2160});
         await page.goto(this.link, {
