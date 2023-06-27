@@ -2,7 +2,7 @@ import { launch } from "puppeteer";
 import { IPartida } from "../interfaces/partida";
 
 export class Partida{
-    link: string = "https://ge.globo.com/agenda/#/";
+    link: string = "https://ge.globo.com/agenda/#/todos/25-06-2023";
 
     constructor(){}
     
@@ -10,25 +10,28 @@ export class Partida{
     async getAMatch(): Promise<any>{
         let browser = await launch();
         let page = await browser.newPage();
+        //await page.setViewport({ width: 3840, height: 2160});
         await page.goto(this.link, {
             waitUntil: "load",
             timeout: 0
         });
-        await page.screenshot({path: "screenshot_page.png"});
+
+        //Tira um print da pagina
+        //await page.screenshot({path: "screenshot_page.png"});
 
         let pageContent: any = await page.evaluate(() => {
-            function cleanDiv(div: any, classCSS: String): string{
-                return div.querySelector(classCSS)?.innerText;
-            }
-            //GroupByChampionshipsstyle__GroupBychampionshipsWrapper-sc-132ht2b-0 feqhES
-            //querySelectorAll(".dKTUvJ")
-            //fndQTL
+            //Expande todas as partidas da pagina
+            let buttons = [...document.querySelectorAll(".bUoAfX")]
+            buttons.forEach((el: any) => {
+                el.click();
+            });
             let divs = [...document.querySelectorAll(".feqhES")];
-
+            
+            //Retorna um array contendo em cada posicao o campeonato e as partidas do mesmo
             return divs.map((el: any) => {
                 let campeonato = el.querySelector(".fndQTL").innerText;
                 let divsChamps = [...el.querySelectorAll(".dKTUvJ")];
-                return divsChamps.map((el: any) => {
+                let partidas =  divsChamps.map((el: any) => {
                     return{
                         campeonato: campeonato,
                         momento: el.querySelector(".bRoxNA").innerText,
@@ -39,8 +42,14 @@ export class Partida{
                         placar_vistante: el.querySelectorAll(".eqJVIF")[1]?.innerText
                     }
                 });
+
+                return {
+                    campeonato: campeonato,
+                    partidas: partidas
+                };
             });
         });
+        await browser.close();
         return pageContent;
     }
 }
