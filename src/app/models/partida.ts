@@ -8,7 +8,8 @@ export class Partida{
     constructor(){}
     
     //@TODO: Fazer de outros campeonatos, no momento só busco do brasileiro
-    async getAMatch(): Promise<any>{
+    async getAMatch(data?: string): Promise<any>{
+        this.proximoHorario(23);
         const partidas = await redisClient.get("partidas")
         if(partidas) return JSON.parse(partidas);
 
@@ -62,7 +63,16 @@ export class Partida{
             });
         });
         await browser.close();
-        await redisClient.set("partidas", JSON.stringify(pageContent));
+        await redisClient.set("partidas", JSON.stringify(pageContent), {EXAT: this.proximoHorario(12)});
         return pageContent;
+    }
+
+    //Recebe um inteiro representando a hora do dia => 00 ~ 23
+    private proximoHorario(hora: number): number{
+        let now = new Date();
+        let proximaHora = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hora, 0, 0);
+        if(proximaHora < now) proximaHora.setDate(proximaHora.getDate() + 1);
+        const expirationTime = Math.floor(proximaHora.getTime() / 1000);
+        return expirationTime;
     }
 }
