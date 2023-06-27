@@ -2,13 +2,14 @@ import puppeteer, { launch } from "puppeteer";
 import { IPartida } from "../interfaces/partida";
 
 export class Partida{
-    link: string = "https://ge.globo.com/agenda/#/todos/27-06-2023";
+    link: string = "https://ge.globo.com/agenda/#/todos/";
 
     constructor(){}
     
     //@TODO: Fazer de outros campeonatos, no momento só busco do brasileiro
     async getAMatch(): Promise<any>{
         let browser = await launch({
+            headless: 'new',
             args: [
                 "--disable-setuid-sandbox",
                 "--no-sandbox",
