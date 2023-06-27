@@ -2,7 +2,7 @@ import puppeteer, { launch } from "puppeteer";
 import { IPartida } from "../interfaces/partida";
 
 export class Partida{
-    link: string = "https://ge.globo.com/agenda/#/todos/24-06-2023";
+    link: string = "https://ge.globo.com/agenda/#/todos/27-06-2023";
 
     constructor(){}
     
