@@ -1,20 +1,16 @@
-
-import express, { Request, Response } from 'express';
-//import indexRoutes from './routes/indexRoutes';
-import dotenv from 'dotenv';
-//import cron from 'node-cron';
-
-//Carregando variaveis de ambiente
+import dotenv from "dotenv";
+//Configurando todas as variaveis de ambiente
 dotenv.config();
+import express from "express";
+//Importando o arquivo principal das rotas
+import routes from "./app/routes/routes";
 
 const server = express();
-//server.use(indexRoutes);
-
-server.get('/', async(_req: Request, res: Response) => {
-    res.status(200).json({"Feito por: Kelvin Lehrback":"-> https://github.com/GodKelvin"});
-});
+//Permite converter o dado que vem em json
+server.use(express.json());
+server.use(routes);
 
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
-    console.log(`Servidor running on port ${port}, acess: http://localhost:${port}/`);
+    console.log(`--Servidor rodando na porta ${port}, acess: http://localhost:${port}/`);
 });
