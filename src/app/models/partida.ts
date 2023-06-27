@@ -27,9 +27,18 @@ export class Partida{
 
             return divs.map((el: any) => {
                 let campeonato = el.querySelector(".fndQTL").innerText;
-                return{
-                    campeonato: campeonato
-                }
+                let divsChamps = [...el.querySelectorAll(".dKTUvJ")];
+                return divsChamps.map((el: any) => {
+                    return{
+                        campeonato: campeonato,
+                        momento: el.querySelector(".bRoxNA").innerText,
+                        hora: el.querySelector(".kkQFQb").innerText,
+                        mandante: el.querySelectorAll(".kXBLsZ")[0].innerText,
+                        visitante: el.querySelectorAll(".kXBLsZ")[1].innerText,
+                        placar_mandante: el.querySelectorAll(".eqJVIF")[0]?.innerText,
+                        placar_vistante: el.querySelectorAll(".eqJVIF")[1]?.innerText
+                    }
+                });
             });
         });
         return pageContent;
