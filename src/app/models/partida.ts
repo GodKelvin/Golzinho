@@ -1,5 +1,6 @@
 import puppeteer, { launch } from "puppeteer";
 import { IPartida } from "../interfaces/partida";
+import redisClient from "../../redis/redis";
 
 export class Partida{
     link: string = "https://ge.globo.com/agenda/#/todos/";
@@ -8,6 +9,9 @@ export class Partida{
     
     //@TODO: Fazer de outros campeonatos, no momento só busco do brasileiro
     async getAMatch(): Promise<any>{
+        const partidas = await redisClient.get("partidas")
+        if(partidas) return JSON.parse(partidas);
+
         let browser = await launch({
             headless: 'new',
             args: [
@@ -51,7 +55,6 @@ export class Partida{
                         placar_visitante: el.querySelectorAll(".eqJVIF")[1]?.innerText
                     }
                 });
-
                 return {
                     campeonato: campeonato,
                     partidas: partidas
@@ -59,6 +62,7 @@ export class Partida{
             });
         });
         await browser.close();
+        await redisClient.set("partidas", JSON.stringify(pageContent));
         return pageContent;
     }
 }
