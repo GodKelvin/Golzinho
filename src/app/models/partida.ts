@@ -2,7 +2,7 @@ import { launch } from "puppeteer";
 import { IPartida } from "../interfaces/partida";
 
 export class Partida{
-    link: string = "https://ge.globo.com/agenda/#/todos/25-06-2023";
+    link: string = "https://ge.globo.com/agenda/#/todos/24-06-2023";
 
     constructor(){}
     
@@ -39,7 +39,7 @@ export class Partida{
                         mandante: el.querySelectorAll(".kXBLsZ")[0].innerText,
                         visitante: el.querySelectorAll(".kXBLsZ")[1].innerText,
                         placar_mandante: el.querySelectorAll(".eqJVIF")[0]?.innerText,
-                        placar_vistante: el.querySelectorAll(".eqJVIF")[1]?.innerText
+                        placar_visitante: el.querySelectorAll(".eqJVIF")[1]?.innerText
                     }
                 });
 
