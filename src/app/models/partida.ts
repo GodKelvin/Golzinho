@@ -3,16 +3,20 @@ import { IPartida } from "../interfaces/partida";
 import redisClient from "../../redis/redis";
 
 export class Partida{
+    data: string = ""
     link: string = "https://ge.globo.com/agenda/#/todos/";
-
     constructor(){}
-    
-    //@TODO: Fazer de outros campeonatos, no momento só busco do brasileiro
-    async getAMatch(data?: string): Promise<any>{
-        this.proximoHorario(23);
-        const partidas = await redisClient.get("partidas")
-        if(partidas) return JSON.parse(partidas);
 
+    async getAMatch(data: string): Promise<any>{
+        this.data = data;
+        this.setLink(this.data);
+        const partidas = await redisClient.get(`partida_${this.data}`)
+        if(partidas) return JSON.parse(partidas);
+        let newPartidas = await this.scrapping();
+        return newPartidas;
+
+    }
+    private async scrapping(){
         let browser = await launch({
             headless: 'new',
             args: [
@@ -63,7 +67,7 @@ export class Partida{
             });
         });
         await browser.close();
-        await redisClient.set("partidas", JSON.stringify(pageContent), {EXAT: this.proximoHorario(12)});
+        await redisClient.set(`partida_${this.data}`, JSON.stringify(pageContent), {EXAT: this.proximoHorario(0)});
         return pageContent;
     }
 
@@ -71,8 +75,14 @@ export class Partida{
     private proximoHorario(hora: number): number{
         let now = new Date();
         let proximaHora = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hora, 0, 0);
+
+        //Se o horario ja passou, seta para o proximo dia
         if(proximaHora < now) proximaHora.setDate(proximaHora.getDate() + 1);
         const expirationTime = Math.floor(proximaHora.getTime() / 1000);
         return expirationTime;
+    }
+
+    private setLink(data: string): void{
+        this.link = `https://ge.globo.com/agenda/#/todos/${data}`;
     }
 }
