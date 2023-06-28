@@ -10,8 +10,8 @@ export class Partida{
     async getAMatch(data: string): Promise<any>{
         this.data = data;
         this.setLink(this.data);
-        const partidas = await redisClient.get(`partida_${this.data}`)
-        if(partidas) return JSON.parse(partidas);
+        //const partidas = await redisClient.get(`partida_${this.data}`)
+        //if(partidas) return JSON.parse(partidas);
         let newPartidas = await this.scrapping();
         return newPartidas;
 
@@ -33,7 +33,7 @@ export class Partida{
             waitUntil: "load",
             timeout: 0
         });
-
+        console.log("1");
         //Tira um print da pagina
         //await page.screenshot({path: "screenshot_page.png"});
 
@@ -66,8 +66,9 @@ export class Partida{
                 };
             });
         });
+        console.log("2");
         await browser.close();
-        await redisClient.set(`partida_${this.data}`, JSON.stringify(pageContent), {EXAT: this.proximoHorario(0)});
+        //await redisClient.set(`partida_${this.data}`, JSON.stringify(pageContent), {EXAT: this.proximoHorario(0)});
         return pageContent;
     }
 
